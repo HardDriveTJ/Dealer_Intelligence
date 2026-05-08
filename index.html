@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>RamJet Racing Dealer Intelligence</title>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
 
 :root{
@@ -100,26 +102,16 @@ body{
   background:rgba(255,43,43,0.08);
 }
 
-/* TRIPLE CROWN */
-.crown{
-  border:1px solid var(--yellow);
-  background:rgba(255,204,0,0.06);
-}
-
-.badge{
-  display:inline-block;
-  padding:4px 10px;
-  font-size:11px;
-  border-radius:999px;
-  background:var(--yellow);
-  color:#000;
-  font-weight:700;
-  margin-bottom:10px;
+/* GRAPH */
+.chartBox{
+  height:260px;
+  padding:10px;
 }
 
 /* MOBILE */
 @media(max-width:900px){
   .tabs{overflow-x:auto;flex-wrap:nowrap;}
+  .chartBox{height:220px;}
 }
 
 </style>
@@ -149,6 +141,10 @@ body{
 <div class="card">
 <div class="card-title">Executive Snapshot</div>
 
+<div class="chartBox">
+<canvas id="salesChart"></canvas>
+</div>
+
 <div class="item"><div class="line"><div class="left"><div class="code">2025</div><span class="div"></span><div class="name">$65,668.68</div></div></div></div>
 <div class="item"><div class="line"><div class="left"><div class="code">2026</div><span class="div"></span><div class="name red">$51,972.07</div></div></div></div>
 <div class="item"><div class="line"><div class="left"><div class="code">YOY</div><span class="div"></span><div class="name red">-20.9%</div></div></div></div>
@@ -156,105 +152,13 @@ body{
 
 </div>
 
-<!-- ================= TRIPLE CROWN ================= -->
-<div class="card crown">
-
-<div class="card-title">Program Status</div>
-
-<div class="badge">🏆 TRIPLE CROWN ACTIVE</div>
-
-<div class="item">
-<div class="line">
-<div class="left">
-<div class="code">STATUS</div><span class="div"></span>
-<div class="name">ACTIVE DEALER</div>
-</div>
-</div>
 </div>
 
-<div class="item">
-<div class="line">
-<div class="left">
-<div class="code">FREIGHT</div><span class="div"></span>
-<div class="name">$50 Minimum Order</div>
-</div>
-</div>
-</div>
-
-<div class="item">
-<div class="line">
-<div class="left">
-<div class="code">CREDIT</div><span class="div"></span>
-<div class="name">$400 Destroy-in-Field</div>
-</div>
-</div>
-</div>
-
-<div class="item">
-<div class="line">
-<div class="left">
-<div class="code">RETURNS</div><span class="div"></span>
-<div class="name">12 Month Allowance</div>
-</div>
-</div>
-</div>
-
-<div class="item">
-<div class="line">
-<div class="left">
-<div class="code">SUPPORT</div><span class="div"></span>
-<div class="name">Dedicated Phone Support</div>
-</div>
-</div>
-</div>
-
-<div class="item">
-<div class="line">
-<div class="left">
-<div class="code">APPAREL</div><span class="div"></span>
-<div class="name">30% Buy-In Protection</div>
-</div>
-</div>
-</div>
-
-<div class="item">
-<div class="line">
-<div class="left">
-<div class="code">OPEN HOUSE</div><span class="div"></span>
-<div class="name">$500 Program Eligibility</div>
-</div>
-</div>
-</div>
-
-<div class="item">
-<div class="line">
-<div class="left">
-<div class="code">LOYALTY</div><span class="div"></span>
-<div class="name">2% Growth Credit (10% Min Growth)</div>
-</div>
-</div>
-</div>
-
-</div>
-
-<!-- ================= ORDER ================= -->
-<div class="card order">
-<div class="card-title">Suggested Order</div>
-
-<div class="item"><div class="line"><div class="left"><div class="code">822-1001</div><span class="div"></span><div class="name">ENGINE OIL 20W50 → 325</div></div></div></div>
-<div class="item"><div class="line"><div class="left"><div class="code">822-1041</div><span class="div"></span><div class="name">FULL SYN 20W50 → 500</div></div></div></div>
-<div class="item"><div class="line"><div class="left"><div class="code">133-3014</div><span class="div"></span><div class="name">DYNA MODULE → 5</div></div></div></div>
-
-</div>
-
-</div>
-
-<!-- ================= OTHER TABS (UNCHANGED STRUCTURE KEPT) ================= -->
-
-<div class="tab"><div class="card"><div class="card-title">Top Opportunities</div></div></div>
-<div class="tab"><div class="card"><div class="card-title">Core Volume</div></div></div>
-<div class="tab"><div class="card"><div class="card-title">Stable Items</div></div></div>
-<div class="tab"><div class="card"><div class="card-title">Declining Items</div></div></div>
+<!-- OTHER TABS (UNCHANGED PLACEHOLDERS) -->
+<div class="tab"><div class="card"><div class="card-title">Growth</div></div></div>
+<div class="tab"><div class="card"><div class="card-title">Core</div></div></div>
+<div class="tab"><div class="card"><div class="card-title">Stable</div></div></div>
+<div class="tab"><div class="card"><div class="card-title">Risk</div></div></div>
 <div class="tab"><div class="card"><div class="card-title">New / Lost</div></div></div>
 
 </div>
@@ -270,6 +174,40 @@ btn.forEach(b=>b.classList.remove("active"));
 tabs[i].classList.add("active");
 btn[i].classList.add("active");
 }
+
+/* ================= GRAPH ================= */
+const ctx = document.getElementById('salesChart');
+
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['2025 Sales', '2026 Sales'],
+    datasets: [{
+      label: 'Revenue',
+      data: [65668.68, 51972.07],
+      backgroundColor: ['#ff2b2b','#aa0000'],
+      borderColor: '#ff2b2b',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {
+        ticks: { color: '#fff' },
+        grid: { color: '#222' }
+      },
+      y: {
+        ticks: { color: '#fff' },
+        grid: { color: '#222' }
+      }
+    }
+  }
+});
 </script>
 
 </body>
